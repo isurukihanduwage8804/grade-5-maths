@@ -3,34 +3,47 @@ import streamlit as st
 # පිටුවේ සැකසුම්
 st.set_page_config(page_title="5 ශ්‍රේණිය ගණිතය අභියෝගය", page_icon="📝", layout="centered")
 
-# CSS මගින් පිළිතුරු බොත්තම් තුන් ගුණයකින් විශාල කිරීම
+# CSS මගින් අකුරු සහ බොත්තම් ඉතා විශාල කිරීම
 st.markdown("""
     <style>
-    /* මුළු ප්‍රශ්න පෙට්ටියම ලස්සන කිරීම */
+    /* මුළු ප්‍රශ්න පෙට්ටිය */
     .question-card {
-        background-color: #ffffff; padding: 25px; border-radius: 15px;
+        background-color: #ffffff; padding: 30px; border-radius: 15px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 25px;
-        border-left: 8px solid #3498db;
+        border-left: 10px solid #3498db;
     }
     
-    /* බහුවරණ (Radio Options) තුන් ගුණයකින් විශාල කිරීම */
-    div[data-testid="stRadio"] > label {
-        font-size: 30px !important; /* අකුරු විශාලත්වය */
+    /* ප්‍රශ්නයේ අකුරු විශාලත්වය */
+    h2 { font-size: 40px !important; color: #2c3e50; }
+
+    /* බහුවරණ පිළිතුරු වල අකුරු ඉතා විශාල කිරීම (3x Size) */
+    div[data-testid="stRadio"] label p {
+        font-size: 35px !important; 
         font-weight: bold !important;
-        color: #2c3e50 !important;
-        padding: 15px !important;
-    }
-    
-    /* රේඩියෝ බොත්තම (Circle) විශාල කිරීම */
-    div[data-testid="stRadio"] div[role="radiogroup"] > label > div:first-child {
-        transform: scale(2.5); /* බොත්තමේ ප්‍රමාණය 2.5 ගුණයකින් වැඩි කිරීම */
-        margin-right: 25px !important;
+        line-height: 1.5 !important;
     }
 
-    /* මීළඟ ප්‍රශ්නය බොත්තම */
+    /* රේඩියෝ බොත්තමේ රවුම ඉතා විශාල කිරීම */
+    div[data-testid="stRadio"] div[role="radiogroup"] > label > div:first-child {
+        transform: scale(3.0) !important; /* 3 ගුණයකින් විශාල කර ඇත */
+        margin-right: 30px !important;
+        margin-left: 10px !important;
+    }
+
+    /* පිළිතුරු අතර පරතරය වැඩි කිරීම */
+    div[data-testid="stRadio"] div[role="radiogroup"] {
+        gap: 30px !important;
+        padding: 20px 0 !important;
+    }
+
+    /* 'මීළඟ ප්‍රශ්නය' බොත්තම විශාල කිරීම */
     .stButton > button {
-        background-color: #2ecc71; color: white; border-radius: 10px;
-        height: 4em; width: 100%; font-size: 25px; font-weight: bold;
+        background-color: #2ecc71 !important;
+        color: white !important;
+        height: 80px !important;
+        font-size: 30px !important;
+        font-weight: bold !important;
+        border-radius: 15px !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -45,7 +58,7 @@ def get_all_questions():
         {"q": "සෘජුකෝණාස්‍රයක වටප්‍රමාණය සෙවීමේ සූත්‍රය කුමක්ද?", "o": ["දිග + පළල", "2 x (දිග + පළල)", "දිග x පළල", "දිග - පළල"], "a": "2 x (දිග + පළල)"},
     ]
     
-    # ප්‍රශ්න 100 සම්පූර්ණ කිරීම
+    # ප්‍රශ්න 100 දක්වා පිරවීම
     for i in range(len(q_list) + 1, 101):
         num = i * 2
         q_list.append({
@@ -55,7 +68,6 @@ def get_all_questions():
         })
     return q_list
 
-# Session State කළමනාකරණය
 if 'quiz_db' not in st.session_state:
     st.session_state.quiz_db = get_all_questions()
     st.session_state.idx = 0
@@ -74,10 +86,10 @@ if not st.session_state.done:
     # ප්‍රශ්නය පෙන්වීම
     st.markdown(f'<div class="question-card"><h2>{current_q["q"]}</h2></div>', unsafe_allow_html=True)
     
-    # විශාල කරන ලද පිළිතුරු තේරීම
+    # පිළිතුරු තේරීම
     choice = st.radio("නිවැරදි පිළිතුර තෝරන්න:", current_q["o"], key=f"q{st.session_state.idx}")
 
-    st.write("---") # වෙන් කිරීමේ ඉරක්
+    st.write("") # Space
 
     if st.button("මීළඟ ප්‍රශ්නයට යන්න ➔"):
         if choice == current_q["a"]:
@@ -91,13 +103,12 @@ if not st.session_state.done:
             st.rerun()
 
 else:
-    # ප්‍රතිඵල පෙන්වීම
     st.balloons()
-    st.success("ඔබ ප්‍රශ්න 100 ම අවසන් කළා! 🎉")
+    st.success("සියලු ප්‍රශ්න අවසන්! 🎉")
     st.markdown(f"""
-        <div style='text-align: center; background: white; padding: 40px; border-radius: 20px;'>
-            <h1>ඔබේ ලකුණු සංඛ්‍යාව</h1>
-            <h1 style='font-size: 80px; color: #3498db;'>{st.session_state.score} / 100</h1>
+        <div style='text-align: center; background: white; padding: 50px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);'>
+            <h1 style='font-size: 50px;'>ඔබේ ලකුණු සංඛ්‍යාව</h1>
+            <h1 style='font-size: 100px; color: #3498db;'>{st.session_state.score} / 100</h1>
         </div>
     """, unsafe_allow_html=True)
     
